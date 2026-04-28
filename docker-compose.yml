@@ -3,6 +3,14 @@ version: '3.8'
 services:
   backend:
     build: ./backend
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=app_user
+      - DB_PASSWORD=mysecretpassword
+      - DB_NAME=microservices_platform
+      - DB_PORT=5432
     ports:
       - "3001:5000"
 
@@ -10,3 +18,19 @@ services:
     build: ./frontend
     ports:
       - "8080:80"
+
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: microservices_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
